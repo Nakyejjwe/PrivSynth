@@ -7,3 +7,4 @@ venv/
 # The full UCI Adult files are downloaded locally, not committed
 data/adult.data
 data/adult.test
+*.egg-info/
