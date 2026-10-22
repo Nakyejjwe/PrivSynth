@@ -1,0 +1,51 @@
+Dataset(name='adult', rows=30162, columns=15, quasi_identifiers=['age', 'sex', 'race', 'marital_status', 'native_country'], sensitive_attribute='income') 
+
+        column        type             role  missing  distinct_values
+           age     numeric quasi-identifier        0               72
+     workclass categorical            other        0                7
+        fnlwgt     numeric            other        0            20263
+     education categorical            other        0               16
+ education_num     numeric            other        0               16
+marital_status categorical quasi-identifier        0                7
+    occupation categorical            other        0               14
+  relationship categorical            other        0                6
+          race categorical quasi-identifier        0                5
+           sex categorical quasi-identifier        0                2
+  capital_gain     numeric            other        0              118
+  capital_loss     numeric            other        0               90
+hours_per_week     numeric            other        0               94
+native_country categorical quasi-identifier        0               41
+        income categorical        sensitive        0                2 
+
+== Original data ==
+k-anonymity check (k = 5) on age, sex, race, marital_status, native_country: FAILS
+  smallest group size (k achieved): 1
+  unique records:  2,080 of 30,162 (6.9%)
+  records at risk: 3,912 (13.0%)
+  average risk:    0.114   max risk: 1.000
+  l-diversity:     1 
+
+== Age in 5-year ranges ==
+k-anonymity check (k = 5) on age, sex, race, marital_status, native_country: FAILS
+  smallest group size (k achieved): 1
+  unique records:  922 of 30,162 (3.1%)
+  records at risk: 2,051 (6.8%)
+  average risk:    0.057   max risk: 1.000
+  l-diversity:     1 
+
+== Age in 10-year ranges ==
+k-anonymity check (k = 5) on age, sex, race, marital_status, native_country: FAILS
+  smallest group size (k achieved): 1
+  unique records:  648 of 30,162 (2.1%)
+  records at risk: 1,530 (5.1%)
+  average risk:    0.042   max risk: 1.000
+  l-diversity:     1 
+
+== 10-year ranges + rare values -> 'Other' ==
+k-anonymity check (k = 5) on age, sex, race, marital_status, native_country: FAILS
+  smallest group size (k achieved): 1
+  unique records:  504 of 30,162 (1.7%)
+  records at risk: 1,263 (4.2%)
+  average risk:    0.036   max risk: 1.000
+  l-diversity:     1 
+
