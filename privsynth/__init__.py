@@ -5,23 +5,45 @@ The package is organised into four modules, connected later by a
 
 * ``privsynth.data``       - loading datasets and describing their schema
 * ``privsynth.privacy``    - re-identification risk and differential privacy
-* ``privsynth.generation`` - synthetic data generators (Week 2)
+* ``privsynth.generation`` - synthetic data generators
 * ``privsynth.evaluation`` - utility and risk metrics (Week 3)
 """
 
 from privsynth.data import AdultDataLoader, CSVLoader, Dataset
 from privsynth.exceptions import (
     DataLoadError,
+    NotFittedError,
     PrivacyBudgetExceededError,
     PrivSynthError,
     SchemaError,
 )
-from privsynth.privacy import Generalizer, KAnonymityChecker, RiskReport
+from privsynth.generation import (
+    BayesianNetworkSynthesizer,
+    IndependentMarginalSynthesizer,
+    Synthesizer,
+)
+from privsynth.privacy import (
+    ExponentialMechanism,
+    GaussianMechanism,
+    Generalizer,
+    KAnonymityChecker,
+    LaplaceMechanism,
+    PrivacyBudget,
+    RiskReport,
+)
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "AdultDataLoader",
+    "BayesianNetworkSynthesizer",
+    "ExponentialMechanism",
+    "GaussianMechanism",
+    "IndependentMarginalSynthesizer",
+    "LaplaceMechanism",
+    "NotFittedError",
+    "PrivacyBudget",
+    "Synthesizer",
     "CSVLoader",
     "Dataset",
     "DataLoadError",

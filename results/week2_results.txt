@@ -1,0 +1,80 @@
+Dataset(name='adult', rows=30162, columns=15, quasi_identifiers=['age', 'sex', 'race', 'marital_status', 'native_country'], sensitive_attribute='income') 
+
+== Releasing one count: people earning >50K (true value 7,508) ==
+ epsilon    Laplace    (std)   Gaussian    (std)
+     0.1     7511.2    14.14     7511.9    30.75
+     0.5     7508.6     2.83     7508.9     7.03
+     1.0     7508.3     1.41     7508.5     3.73
+     2.0     7508.2     0.71     7508.3     1.99
+     5.0     7508.1     0.28     7508.1     0.89
+Laplace (pure DP) has less noise than Gaussian for a single count;
+Gaussian pays off when many values are released together (L2 sensitivity).
+
+== Privacy budget ==
+  released 'count >50K' (remaining epsilon 0.6)
+  released 'count female' (remaining epsilon 0.2)
+  refused: Cannot spend epsilon=0.4, delta=0 on 'count over 60': only epsilon=0.2, delta=0 remain.
+
+== Generators: average TVD over 3 runs (lower is better) ==
+ epsilon | Independent 1-way   2-way | Bayesian 1-way   2-way
+     0.1 |             0.032   0.108 |          0.116   0.221
+     0.5 |             0.012   0.084 |          0.043   0.103
+     1.0 |             0.010   0.082 |          0.024   0.071
+     2.0 |             0.009   0.081 |          0.015   0.054
+     5.0 |             0.009   0.081 |          0.011   0.047
+
+== Bayesian network learned at epsilon = 1 (child <- parent) ==
+  hours_per_week <- (root)
+  education <- hours_per_week
+  education_num <- education
+  age <- hours_per_week
+  race <- education_num
+  native_country <- age
+  occupation <- education_num
+  sex <- occupation
+  relationship <- sex
+  marital_status <- relationship
+  income <- occupation
+  workclass <- hours_per_week
+  capital_loss <- occupation
+  fnlwgt <- education
+  capital_gain <- income
+
+Privacy budget: spent epsilon=1.0000 of 1.0000
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - structure: choose parent: epsilon=0.0214
+  - marginal: hours_per_week: epsilon=0.0467
+  - table: education | hours_per_week: epsilon=0.0467
+  - table: education_num | education: epsilon=0.0467
+  - table: age | hours_per_week: epsilon=0.0467
+  - table: race | education_num: epsilon=0.0467
+  - table: native_country | age: epsilon=0.0467
+  - table: occupation | education_num: epsilon=0.0467
+  - table: sex | occupation: epsilon=0.0467
+  - table: relationship | sex: epsilon=0.0467
+  - table: marital_status | relationship: epsilon=0.0467
+  - table: income | occupation: epsilon=0.0467
+  - table: workclass | hours_per_week: epsilon=0.0467
+  - table: capital_loss | occupation: epsilon=0.0467
+  - table: fnlwgt | education: epsilon=0.0467
+  - table: capital_gain | income: epsilon=0.0467
+
+== Five synthetic records (Bayesian network, epsilon = 1) ==
+ age        workclass  fnlwgt    education  education_num     marital_status      occupation   relationship  race  sex  capital_gain  capital_loss  hours_per_week native_country income
+  55 Self-emp-not-inc  171818 Some-college             10 Married-civ-spouse           Sales        Husband White Male             0             0              40  United-States   >50K
+  38          Private  133806      HS-grad              9           Divorced    Tech-support      Unmarried White Male             0          1537              39  United-States   >50K
+  50          Private  635570    Assoc-voc             11      Never-married Exec-managerial Other-relative White Male             0             0              26        Hungary  <=50K
+  19          Private  168575         12th             14      Never-married  Prof-specialty  Not-in-family White Male             0             0              24       Columbia  <=50K
+  31          Private  256763      HS-grad              9 Married-civ-spouse    Craft-repair        Husband White Male             0             0              41  United-States  <=50K

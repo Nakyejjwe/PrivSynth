@@ -19,4 +19,8 @@ class SchemaError(PrivSynthError):
 
 
 class PrivacyBudgetExceededError(PrivSynthError):
-    """Raised when a request would spend more epsilon than remains (Week 2)."""
+    """Raised when a request would spend more epsilon (or delta) than remains."""
+
+
+class NotFittedError(PrivSynthError):
+    """Raised when a synthesizer is asked to sample before it has been fitted."""

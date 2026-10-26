@@ -119,6 +119,13 @@ class AdultDataLoader(DataLoader):
     ]
     QUASI_IDENTIFIERS = ["age", "sex", "race", "marital_status", "native_country"]
     SENSITIVE_ATTRIBUTE = "income"
+    #: Bin edges for skewed columns, for the synthesizers' ``bin_edges``
+    #: argument. Most people have zero capital gain/loss, so 0 gets its own
+    #: bin ``[0, 1)``. Edges are fixed in advance, not read from the data.
+    BIN_EDGES = {
+        "capital_gain": [0, 1, 1000, 3000, 5000, 7500, 10000, 15000, 20000, 100000],
+        "capital_loss": [0, 1, 1000, 1500, 2000, 2500, 5000],
+    }
 
     def _read(self, source: Source) -> pd.DataFrame:
         frame = pd.read_csv(
