@@ -20,6 +20,7 @@ is leaking something about the specific people it was trained on.
 
 from __future__ import annotations
 
+import math
 from typing import Iterable, Mapping, Optional, Sequence
 
 import numpy as np
@@ -134,6 +135,12 @@ class AttributeInferenceRisk(Evaluator):
     people it was trained on than about anyone else. This follows the
     member/control comparison used by Giomi et al. (2023, "Anonymeter").
 
+    Both accuracies are measured on samples, so on small data the risk can
+    look positive by chance (and, being clipped at 0, chance only ever
+    pushes it up). ``inference_risk_lower`` is a 95% lower confidence
+    bound from the usual two-proportion normal approximation; when it is 0
+    the gap between members and non-members could be chance.
+
     Args:
         quasi_identifiers: Columns the attacker knows; defaults to the dataset's.
         sensitive_attribute: Column to guess; defaults to the dataset's.
@@ -214,16 +221,19 @@ class AttributeInferenceRisk(Evaluator):
         details = pd.DataFrame(rows)
         acc_in, acc_out = details.loc[0, "accuracy"], details.loc[1, "accuracy"]
         risk = max(0.0, (acc_in - acc_out) / (1.0 - acc_out)) if acc_out < 1 else 0.0
+        se = math.sqrt(acc_in * (1 - acc_in) / m + acc_out * (1 - acc_out) / m)
+        lower = max(0.0, (acc_in - acc_out - 1.96 * se) / (1.0 - acc_out)) if acc_out < 1 else 0.0
         metrics = {
             "accuracy_members": acc_in,
             "accuracy_non_members": acc_out,
             "baseline_accuracy": details.loc[0, "baseline_accuracy"],
             "match_rate_members": details.loc[0, "match_rate"],
             "inference_risk": risk,
+            "inference_risk_lower": lower,
         }
         notes = [f"Attacker knows {', '.join(qis)} and guesses '{sensitive}' "
                  f"for {m:,} members and {m:,} non-members."]
-        return self._result(metrics, lower_is_better=["inference_risk"], details=details, notes=notes)
+        return self._result(metrics, lower_is_better=["inference_risk", "inference_risk_lower"], details=details, notes=notes)
 
 
 def _rows(dataset: Dataset, n: int, rng: np.random.Generator) -> pd.DataFrame:

@@ -328,3 +328,12 @@ def test_suite_validates_members():
         EvaluationSuite([MarginalSimilarity(), "not an evaluator"])
     with pytest.raises(ValueError):
         EvaluationSuite([])
+
+
+def test_inference_lower_bound_separates_leaks_from_noise(income_data):
+    train, holdout = income_data
+    leak = AttributeInferenceRisk().evaluate(train, train, holdout)
+    assert 0 < leak["inference_risk_lower"] < leak["inference_risk"]
+    noise = AttributeInferenceRisk().evaluate(train, _shuffled(train), holdout)
+    assert noise["inference_risk_lower"] == 0.0
+    assert "inference_risk_lower" in noise.lower_is_better
