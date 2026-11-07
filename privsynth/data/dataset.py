@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
+import numpy as np
 import pandas as pd
 
 from privsynth.exceptions import SchemaError
@@ -144,6 +145,34 @@ class Dataset:
             raise ValueError("n must be a positive integer.")
         n = min(n, self.n_rows)
         return self.with_data(self._data.sample(n=n, random_state=random_state))
+
+    def split(self, holdout_fraction: float = 0.2, random_state: Optional[int] = None) -> tuple["Dataset", "Dataset"]:
+        """Randomly split into a training part and a holdout part.
+
+        The synthesizer is trained on the first part only. The holdout part
+        plays "new real people" when the synthetic data is evaluated, which
+        is what makes the privacy-risk numbers meaningful.
+
+        Args:
+            holdout_fraction: Share of records put in the holdout (0 to 1, exclusive).
+            random_state: Seed for a reproducible split.
+
+        Returns:
+            ``(train, holdout)``, both with this dataset's schema.
+
+        Raises:
+            ValueError: If the fraction is invalid or leaves either part empty.
+        """
+        if isinstance(holdout_fraction, bool) or not 0 < holdout_fraction < 1:
+            raise ValueError(f"holdout_fraction must be between 0 and 1, got {holdout_fraction!r}.")
+        n_holdout = int(round(self.n_rows * holdout_fraction))
+        if n_holdout < 1 or n_holdout >= self.n_rows:
+            raise ValueError(f"Cannot split {self.n_rows} records with holdout_fraction={holdout_fraction}.")
+        order = np.random.default_rng(random_state).permutation(self.n_rows)
+        holdout = self._data.iloc[order[:n_holdout]]
+        train = self._data.iloc[order[n_holdout:]]
+        return (self.with_data(train, name=f"{self.name} (train)"),
+                self.with_data(holdout, name=f"{self.name} (holdout)"))
 
     def with_data(self, data: pd.DataFrame, name: Optional[str] = None) -> "Dataset":
         """Return a new Dataset with different rows but the same schema.

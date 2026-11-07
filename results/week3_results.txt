@@ -1,0 +1,175 @@
+Dataset(name='adult', rows=30162, columns=15, quasi_identifiers=['age', 'sex', 'race', 'marital_status', 'native_country'], sensitive_attribute='income') 
+
+== 1. One pipeline run ==
+PrivSynth run: Bayesian network, laplace noise, epsilon=1 (spent 1.0000)
+  train 24,130 | holdout 6,032 | synthetic 24,130
+
+Original data:
+k-anonymity check (k = 5) on age, sex, race, marital_status, native_country: FAILS
+  smallest group size (k achieved): 1
+  unique records:  1,825 of 24,130 (7.6%)
+  records at risk: 3,412 (14.1%)
+  average risk:    0.124   max risk: 1.000
+  l-diversity:     1
+
+Marginal similarity (utility)
+  tvd_1way_mean                    0.0295  lower is better
+  tvd_1way_max                     0.0598  lower is better
+  tvd_2way_mean                    0.0864  lower is better
+  tvd_2way_max                     0.2752  lower is better
+
+Association similarity (utility)
+  assoc_diff_mean                  0.0945  lower is better
+  assoc_diff_max                   0.4403  lower is better
+
+Machine-learning utility (utility)
+  accuracy_real                    0.8544
+  f1_real                          0.7938
+  auc_real                         0.9097
+  accuracy_synthetic               0.7871
+  f1_synthetic                     0.5941
+  auc_synthetic                    0.6403
+  accuracy_majority                0.7490
+  utility_ratio                    0.7038
+  note: Predicting 'income' with logistic; tested on 6,032 holdout records.
+
+Distance to closest record (risk)
+  dcr_synthetic_median             0.5590
+  dcr_holdout_median               0.0944
+  dcr_ratio                        5.9185
+  exact_match_synthetic            0.0000  lower is better
+  exact_match_holdout              0.0015
+  closer_to_train_share            0.5142  lower is better
+  note: 2,000 synthetic records checked against all 24,130 training records; closer-to-train test uses 6,032 training vs 6,032 holdout records.
+
+Attribute inference risk (risk)
+  accuracy_members                 0.7305
+  accuracy_non_members             0.7270
+  baseline_accuracy                0.7480
+  match_rate_members               0.9095
+  inference_risk                   0.0128  lower is better
+  note: Attacker knows age, sex, race, marital_status, native_country and guesses 'income' for 2,000 members and 2,000 non-members.
+
+Timings: risk_check 0.0s, generate 0.3s, evaluate 2.7s 
+
+== 2. Experiment grid: 60 runs + 1 reference (train 24,130, holdout 6,032) ==
+  [reference] Real data (no protection) evaluated
+  [1/60] Independent marginals, laplace, eps=0.1, seed=0 (2.7s)
+  [2/60] Independent marginals, laplace, eps=0.1, seed=1 (2.7s)
+  [3/60] Independent marginals, laplace, eps=0.1, seed=2 (2.8s)
+  [4/60] Independent marginals, laplace, eps=0.5, seed=0 (2.8s)
+  [5/60] Independent marginals, laplace, eps=0.5, seed=1 (2.9s)
+  [6/60] Independent marginals, laplace, eps=0.5, seed=2 (2.7s)
+  [7/60] Independent marginals, laplace, eps=1, seed=0 (2.7s)
+  [8/60] Independent marginals, laplace, eps=1, seed=1 (2.7s)
+  [9/60] Independent marginals, laplace, eps=1, seed=2 (2.7s)
+  [10/60] Independent marginals, laplace, eps=2, seed=0 (2.8s)
+  [11/60] Independent marginals, laplace, eps=2, seed=1 (2.8s)
+  [12/60] Independent marginals, laplace, eps=2, seed=2 (2.7s)
+  [13/60] Independent marginals, laplace, eps=5, seed=0 (2.8s)
+  [14/60] Independent marginals, laplace, eps=5, seed=1 (2.7s)
+  [15/60] Independent marginals, laplace, eps=5, seed=2 (2.8s)
+  [16/60] Independent marginals, gaussian, eps=0.1, seed=0 (2.9s)
+  [17/60] Independent marginals, gaussian, eps=0.1, seed=1 (3.1s)
+  [18/60] Independent marginals, gaussian, eps=0.1, seed=2 (2.9s)
+  [19/60] Independent marginals, gaussian, eps=0.5, seed=0 (2.7s)
+  [20/60] Independent marginals, gaussian, eps=0.5, seed=1 (3.0s)
+  [21/60] Independent marginals, gaussian, eps=0.5, seed=2 (2.8s)
+  [22/60] Independent marginals, gaussian, eps=1, seed=0 (2.9s)
+  [23/60] Independent marginals, gaussian, eps=1, seed=1 (3.0s)
+  [24/60] Independent marginals, gaussian, eps=1, seed=2 (2.9s)
+  [25/60] Independent marginals, gaussian, eps=2, seed=0 (3.0s)
+  [26/60] Independent marginals, gaussian, eps=2, seed=1 (2.8s)
+  [27/60] Independent marginals, gaussian, eps=2, seed=2 (2.7s)
+  [28/60] Independent marginals, gaussian, eps=5, seed=0 (2.8s)
+  [29/60] Independent marginals, gaussian, eps=5, seed=1 (3.1s)
+  [30/60] Independent marginals, gaussian, eps=5, seed=2 (3.0s)
+  [31/60] Bayesian network, laplace, eps=0.1, seed=0 (3.4s)
+  [32/60] Bayesian network, laplace, eps=0.1, seed=1 (3.4s)
+  [33/60] Bayesian network, laplace, eps=0.1, seed=2 (3.5s)
+  [34/60] Bayesian network, laplace, eps=0.5, seed=0 (3.1s)
+  [35/60] Bayesian network, laplace, eps=0.5, seed=1 (3.3s)
+  [36/60] Bayesian network, laplace, eps=0.5, seed=2 (3.2s)
+  [37/60] Bayesian network, laplace, eps=1, seed=0 (3.0s)
+  [38/60] Bayesian network, laplace, eps=1, seed=1 (2.9s)
+  [39/60] Bayesian network, laplace, eps=1, seed=2 (3.2s)
+  [40/60] Bayesian network, laplace, eps=2, seed=0 (2.9s)
+  [41/60] Bayesian network, laplace, eps=2, seed=1 (3.1s)
+  [42/60] Bayesian network, laplace, eps=2, seed=2 (3.1s)
+  [43/60] Bayesian network, laplace, eps=5, seed=0 (3.3s)
+  [44/60] Bayesian network, laplace, eps=5, seed=1 (3.1s)
+  [45/60] Bayesian network, laplace, eps=5, seed=2 (2.9s)
+  [46/60] Bayesian network, gaussian, eps=0.1, seed=0 (4.0s)
+  [47/60] Bayesian network, gaussian, eps=0.1, seed=1 (3.6s)
+  [48/60] Bayesian network, gaussian, eps=0.1, seed=2 (3.8s)
+  [49/60] Bayesian network, gaussian, eps=0.5, seed=0 (3.0s)
+  [50/60] Bayesian network, gaussian, eps=0.5, seed=1 (3.4s)
+  [51/60] Bayesian network, gaussian, eps=0.5, seed=2 (3.8s)
+  [52/60] Bayesian network, gaussian, eps=1, seed=0 (3.1s)
+  [53/60] Bayesian network, gaussian, eps=1, seed=1 (2.9s)
+  [54/60] Bayesian network, gaussian, eps=1, seed=2 (3.3s)
+  [55/60] Bayesian network, gaussian, eps=2, seed=0 (3.2s)
+  [56/60] Bayesian network, gaussian, eps=2, seed=1 (3.1s)
+  [57/60] Bayesian network, gaussian, eps=2, seed=2 (3.3s)
+  [58/60] Bayesian network, gaussian, eps=5, seed=0 (3.2s)
+  [59/60] Bayesian network, gaussian, eps=5, seed=1 (3.2s)
+  [60/60] Bayesian network, gaussian, eps=5, seed=2 (2.9s)
+Finished in 184s
+
+== 3. Mean over 3 seeds (Laplace noise) ==
+Better: 1-way TVD lower, 2-way TVD lower, Assoc. diff lower, AUC (TSTR) higher, AUC ratio higher, Exact copies lower, Closer-to-train 0.5, Attack acc. lower, Inference risk lower 
+
+                               1-way TVD  2-way TVD  Assoc. diff  AUC (TSTR)  AUC ratio  Exact copies  Closer-to-train  Attack acc.  Inference risk
+generator             epsilon                                                                                                                      
+Independent marginals 0.1          0.039      0.117        0.116       0.465      0.511           0.0            0.517        0.731           0.013
+                      0.5          0.014      0.086        0.115       0.435      0.478           0.0            0.521        0.732           0.002
+                      1.0          0.011      0.083        0.115       0.427      0.470           0.0            0.522        0.732           0.003
+                      2.0          0.010      0.082        0.115       0.444      0.488           0.0            0.520        0.730           0.000
+                      5.0          0.009      0.081        0.115       0.430      0.473           0.0            0.521        0.730           0.000
+Bayesian network      0.1          0.168      0.298        0.124       0.768      0.845           0.0            0.498        0.735           0.001
+                      0.5          0.051      0.122        0.098       0.705      0.775           0.0            0.524        0.727           0.000
+                      1.0          0.028      0.082        0.087       0.709      0.780           0.0            0.522        0.726           0.004
+                      2.0          0.019      0.061        0.068       0.760      0.835           0.0            0.514        0.733           0.001
+                      5.0          0.011      0.048        0.051       0.837      0.920           0.0            0.501        0.733           0.000 
+
+Reference: the real training data released as-is
+1-way TVD          0.000
+2-way TVD          0.000
+Assoc. diff        0.000
+AUC (TSTR)         0.910
+AUC ratio          1.000
+Exact copies       1.000
+Closer-to-train    0.620
+Attack acc.        0.806
+Inference risk     0.136 
+
+== 4. Laplace vs Gaussian noise (mean 2-way TVD and AUC) ==
+                                   2-way TVD (none)  2-way TVD (laplace)  2-way TVD (gaussian)  AUC (TSTR) (none)  AUC (TSTR) (laplace)  AUC (TSTR) (gaussian)
+generator                 epsilon                                                                                                                             
+Real data (no protection) inf                   0.0                  NaN                   NaN               0.91                   NaN                    NaN
+Independent marginals     0.1                   NaN                0.117                 0.162                NaN                 0.465                  0.458
+                          0.5                   NaN                0.086                 0.095                NaN                 0.435                  0.484
+                          1.0                   NaN                0.083                 0.087                NaN                 0.427                  0.453
+                          2.0                   NaN                0.082                 0.083                NaN                 0.444                  0.456
+                          5.0                   NaN                0.081                 0.082                NaN                 0.430                  0.446
+Bayesian network          0.1                   NaN                0.298                 0.411                NaN                 0.768                  0.754
+                          0.5                   NaN                0.122                 0.199                NaN                 0.705                  0.697
+                          1.0                   NaN                0.082                 0.131                NaN                 0.709                  0.703
+                          2.0                   NaN                0.061                 0.096                NaN                 0.760                  0.787
+                          5.0                   NaN                0.048                 0.062                NaN                 0.837                  0.830 
+
+== 5. Spread across seeds (std of AUC, Laplace) ==
+                               ml.auc_synthetic (mean)  ml.auc_synthetic (std)
+generator             epsilon                                                 
+Independent marginals 0.1                        0.465                   0.100
+                      0.5                        0.435                   0.119
+                      1.0                        0.427                   0.119
+                      2.0                        0.444                   0.113
+                      5.0                        0.430                   0.115
+Bayesian network      0.1                        0.768                   0.004
+                      0.5                        0.705                   0.023
+                      1.0                        0.709                   0.080
+                      2.0                        0.760                   0.051
+                      5.0                        0.837                   0.048 
+
+Saved results/week3_runs.csv, results/week3_summary.csv and 5 figures in results/figures/

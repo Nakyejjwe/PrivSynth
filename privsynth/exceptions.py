@@ -24,3 +24,7 @@ class PrivacyBudgetExceededError(PrivSynthError):
 
 class NotFittedError(PrivSynthError):
     """Raised when a synthesizer is asked to sample before it has been fitted."""
+
+
+class EvaluationError(PrivSynthError):
+    """Raised when an evaluator cannot run, e.g. it needs a holdout set or a target column."""

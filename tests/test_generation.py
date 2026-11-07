@@ -18,25 +18,6 @@ from privsynth.generation.bayesian import mutual_information
 GENERATORS = [IndependentMarginalSynthesizer, BayesianNetworkSynthesizer]
 
 
-@pytest.fixture
-def linked_dataset() -> Dataset:
-    """2,000 records where ``degree`` completely determines ``pay``.
-
-    Also an independent ``region`` column and a numeric ``age``.
-    """
-    rng = np.random.default_rng(7)
-    n = 2000
-    degree = rng.choice(["none", "diploma", "degree"], size=n, p=[0.5, 0.3, 0.2])
-    pay = np.select([degree == "none", degree == "diploma"], ["low", "mid"], "high")
-    frame = pd.DataFrame({
-        "age": rng.integers(18, 70, size=n),
-        "degree": degree,
-        "pay": pay,
-        "region": rng.choice(["Central", "Eastern", "Northern", "Western"], size=n),
-    })
-    return Dataset(frame, name="linked", quasi_identifiers=["age", "region"], sensitive_attribute="pay")
-
-
 # --- Encoder ------------------------------------------------------------- #
 def test_encoder_round_trips_categories(small_dataset):
     enc = TableEncoder().fit(small_dataset)
